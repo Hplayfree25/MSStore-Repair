@@ -47,8 +47,8 @@ MSStore Repair is useful when the Microsoft Store appears installed but behaves 
 ## Screenshots
 
 <p align="center">
-  <img src="./assets/screenshots/msstore-repair-menu.svg" alt="MSStore Repair menu screenshot" width="49%">
-  <img src="./assets/screenshots/msstore-repair-complete.svg" alt="MSStore Repair completion screenshot" width="49%">
+  <img src="./assets/screenshots/windows11-msstore-repair-menu.png" alt="MSStore Repair menu on Windows 11" width="49%">
+  <img src="./assets/screenshots/windows11-msstore-repair-complete.png" alt="MSStore Repair completion screen on Windows 11" width="49%">
 </p>
 
 ---
@@ -359,8 +359,8 @@ MSStore Repair
 ├── README.md
 └── assets
     └── screenshots
-        ├── msstore-repair-menu.svg
-        └── msstore-repair-complete.svg
+        ├── windows11-msstore-repair-menu.png
+        └── windows11-msstore-repair-complete.png
 ```
 
 ---
