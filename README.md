@@ -386,15 +386,3 @@ MSStore Repair is an independent utility and is not affiliated with Microsoft.
 Microsoft Store, Windows, App Installer, BITS, Delivery Optimization, DISM, and SFC are Microsoft technologies and trademarks of their respective owner.
 
 Use this tool at your own risk. Always review scripts before running them with Administrator privileges.
-
----
-
-<div align="center">
-
-<strong>MSStore Repair</strong>
-
-<br>
-
-Professional Microsoft Store recovery for stuck downloads, broken updates, package registration issues, and Store delivery problems.
-
-</div>
