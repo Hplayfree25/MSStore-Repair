@@ -8,7 +8,7 @@
 
 <p>
   <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0b6f8f?style=for-the-badge">
-  <img alt="Script" src="https://img.shields.io/badge/script-Batch-1f2937?style=for-the-badge">
+  <img alt="Script" src="https://img.shields.io/badge/script-PowerShell-1f2937?style=for-the-badge">
   <img alt="Privilege" src="https://img.shields.io/badge/requires-Administrator-b91c1c?style=for-the-badge">
 </p>
 
@@ -30,7 +30,7 @@
 
 ## Overview
 
-**MSStore Repair** is a Windows batch-based repair utility designed to recover Microsoft Store functionality when the Store, app updates, or app installations become stuck, broken, or unreliable.
+**MSStore Repair** is a Windows PowerShell-based repair utility designed to recover Microsoft Store functionality when the Store, app updates, or app installations become stuck, broken, or unreliable.
 
 It provides a guided terminal interface with three repair levels:
 
@@ -38,7 +38,7 @@ It provides a guided terminal interface with three repair levels:
 - **Default Recovery** for common Store, BITS, Delivery Optimization, App Installer, and package registration issues.
 - **Hard Recovery** for deeper Windows Update backend, system file, and network stack repair.
 
-The project is intentionally simple: the main utility is a single file, [`recovery.bat`](./recovery.bat), built to be easy to inspect, easy to run, and easy to share.
+The main recovery tool is [`recovery.ps1`](./recovery.ps1). A small [`recovery.bat`](./recovery.bat) launcher is included for users who prefer opening the tool from File Explorer.
 
 MSStore Repair is useful when the Microsoft Store appears installed but behaves incorrectly, downloads never progress, app updates remain pending, or Windows Store components need to be re-registered.
 
@@ -82,6 +82,7 @@ MSStore Repair performs a staged recovery process depending on the selected mode
 At a high level, it can:
 
 - Require Administrator privileges before making system changes.
+- Preview actions with optional dry-run mode before changing Windows settings.
 - Attempt to create a Windows restore point.
 - Close active Microsoft Store processes.
 - Start and configure required Windows services.
@@ -90,18 +91,21 @@ At a high level, it can:
 - Reset BITS jobs.
 - Clear Delivery Optimization cache.
 - Reset parts of the Windows Update download backend.
-- Re-register Microsoft Store related AppX packages.
+- Check Store-related AppX package existence and manifests before attempting repair.
+- Re-register Microsoft Store related AppX packages only when a valid manifest exists.
 - Run DISM health restoration.
 - Run System File Checker.
 - Reset DNS and Windows network stack settings.
 - Open Microsoft Store after recovery.
 - Write a repair log to the Desktop.
 
-The generated log is saved here:
+The generated log is saved here when writable:
 
 ```text
 %USERPROFILE%\Desktop\MicrosoftStoreRecovery.log
 ```
+
+If the Desktop log path is locked, MSStore Repair falls back to a log file beside `recovery.ps1`.
 
 ---
 
@@ -150,11 +154,12 @@ Start with the lightest repair mode. Move to the next mode only if the issue is 
 
 ## Usage
 
-### 1. Download the script
+### 1. Download the release
 
-Download or clone this repository, then locate:
+Download or clone this repository, then keep these files in the same folder:
 
 ```text
+recovery.ps1
 recovery.bat
 ```
 
@@ -162,11 +167,13 @@ If you downloaded the repository as a ZIP file, extract it first.
 
 ### 2. Run as Administrator
 
-Right-click `recovery.bat` and select:
+Open PowerShell as Administrator in the extracted folder, then run:
 
 ```text
-Run as administrator
+powershell -ExecutionPolicy Bypass -File .\recovery.ps1
 ```
+
+You can also right-click `recovery.bat` and choose **Run as administrator**. The batch file only launches `recovery.ps1`.
 
 Administrator access is required because the tool modifies Windows services, Microsoft Store registration, Windows Update cache, and network settings.
 
@@ -178,7 +185,8 @@ When the menu appears, select one of the available recovery modes:
 [1] Soft Recovery
 [2] Default Recovery
 [3] Hard Recovery
-[4] Exit
+[4] Toggle dry-run preview
+[5] Exit
 ```
 
 For most users, the recommended starting point is:
@@ -188,6 +196,20 @@ For most users, the recommended starting point is:
 ```
 
 Use **Soft Recovery** first if the issue is minor. Use **Hard Recovery** only when the problem continues after Soft or Default mode.
+
+### Optional dry-run preview
+
+Dry-run mode shows the planned actions without changing Windows settings:
+
+```text
+powershell -ExecutionPolicy Bypass -File .\recovery.ps1 -Mode Default -DryRun
+```
+
+For automation or quick testing:
+
+```text
+powershell -ExecutionPolicy Bypass -File .\recovery.ps1 -Mode Soft -DryRun -SkipPrompt -NoStoreLaunch
+```
 
 ### 4. Wait for the process to finish
 
@@ -321,7 +343,7 @@ If the Store is still broken after running MSStore Repair, check this log first.
 MSStore Repair performs system-level repair actions. Read these notes before running it:
 
 - Run it only from a trusted copy of this repository.
-- Review [`recovery.bat`](./recovery.bat) before running it.
+- Review [`recovery.ps1`](./recovery.ps1) and [`recovery.bat`](./recovery.bat) before running it.
 - Close Microsoft Store before starting the repair.
 - Save open work before using Hard Recovery.
 - Restart the PC after recovery.
@@ -355,12 +377,14 @@ If the Store is still broken after Hard Recovery, check the log file and verify 
 
 ```text
 MSStore Repair
-├── recovery.bat
-├── README.md
-└── assets
-    └── screenshots
-        ├── windows11-msstore-repair-menu.png
-        └── windows11-msstore-repair-complete.png
+|-- recovery.ps1
+|-- recovery.bat
+|-- README.md
+|-- LICENSE
+`-- assets
+    `-- screenshots
+        |-- windows11-msstore-repair-menu.png
+        `-- windows11-msstore-repair-complete.png
 ```
 
 ---
@@ -369,13 +393,14 @@ MSStore Repair
 
 This project is lightweight and script-based. It is designed for practical Store recovery rather than a full installer or GUI application.
 
+Current release:
+
+- **v1.0.0**: first MSStore Repair release package with the advanced `recovery.ps1` console, optional dry-run mode, safer package preflight checks, and the `recovery.bat` launcher.
+
 Future improvements may include:
 
-- Optional dry-run mode.
 - More detailed error-code guidance.
-- Separate PowerShell edition.
 - Automatic log summary.
-- Safer package existence checks before repair actions.
 
 ---
 
